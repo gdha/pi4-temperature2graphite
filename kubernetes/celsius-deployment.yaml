@@ -1,0 +1,60 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: celsius
+  namespace: celsius
+  labels:
+    app: celsius
+    app.kubernetes.io/name: celsius
+spec:
+  selector:
+    matchLabels:
+      app: celsius
+  replicas: 5
+  strategy:
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: celsius
+        app.kubernetes.io/name: celsius
+    spec:
+      affinity:
+        nodeAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 100
+              preference:
+                matchExpressions:
+                - key: app
+                  operator: In
+                  values:
+                  - celsius
+                    #topologyKey: "kubernetes.io/hostname"
+      imagePullSecrets:
+        - name: dockerconfigjson-github-com
+      restartPolicy: Always
+      serviceAccountName: celsius-sa
+      containers:
+      - name: celsius
+        image: ghcr.io/gdha/pi4-temperature2graphite:v1.6
+        tty: true
+        volumeMounts:
+        - mountPath: /etc/hostname
+          name: bind-mount--etc-hostname
+          readOnly: true
+        #- mountPath: /var/lib/rancher
+        #  name: bind-mount--var--lib--rancher
+      volumes:
+      - name: bind-mount--etc-hostname
+        hostPath:
+          path: /etc/hostname
+          type: ""
+      #- name: bind-mount--var--lib--rancher
+      #  hostPath:
+      #   path: /var/lib/rancher
+      #   type: ""
+
+
+
+# see https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/
+# see https://github.com/nirgeier/KubernetesLabs/tree/master/Labs/21-KubeAPI to query the k3s API

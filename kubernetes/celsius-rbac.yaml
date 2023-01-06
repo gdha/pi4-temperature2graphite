@@ -1,0 +1,65 @@
+# NOTE: The service account `default:default` already exists in k8s cluster.
+# You can create a new account following like this:
+# Source: https://stackoverflow.com/questions/47973570/kubernetes-log-user-systemserviceaccountdefaultdefault-cannot-get-services
+# Info: https://github.com/fabric8io/fabric8/issues/6840
+# https://travis.media/kubernetes-service-accounts-complete-guide-for-beginners/
+# https://travis.media/clusterrolebinding-with-service-account-all-namespaces/#20210904-restrictnamespaces
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: celsius-sa
+  namespace: celsius
+
+---
+kind: ClusterRole
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+   # "namespace" omitted since ClusterRoles are not namespaced
+  name: celsius-cluster-role
+rules:
+  - apiGroups:
+      - ""
+    resources:
+      - pods
+      - services
+      - endpoints
+      - secrets
+      - namespaces
+    verbs:
+      - get
+      - list
+ 
+---
+kind: RoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: celsius-cluster-role-binding-ns-celsius
+  namespace: celsius
+subjects:
+# You can specify more than one "subject"
+- kind: ServiceAccount
+  name: celsius-sa
+  namespace: celsius
+roleRef:
+  kind: ClusterRole
+  name: celsius-cluster-role
+  # "roleRef" specifies the binding to a Role / ClusterRole
+  apiGroup: rbac.authorization.k8s.io
+
+---
+kind: RoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: celsius-cluster-role-binding-ns-graphite
+  namespace: graphite
+subjects:
+# You can specify more than one "subject"
+- kind: ServiceAccount
+  name: celsius-sa
+  namespace: celsius
+roleRef:
+  kind: ClusterRole
+  name: celsius-cluster-role
+  # "roleRef" specifies the binding to a Role / ClusterRole
+  apiGroup: rbac.authorization.k8s.io

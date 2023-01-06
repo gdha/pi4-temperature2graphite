@@ -9,8 +9,14 @@ LABEL org.opencontainers.image.licenses "GPL-3.0-or-later"
 LABEL maintainer "Gratien Dhaese <gratien.dhaese@gmail.com>"
 
 COPY entrypoint.sh                                  /entrypoint.sh
+COPY k3s                                            /usr/bin/kubectl
+COPY api_query.sh                                   /api_query.sh
 
+# Update and install dependencies
+RUN  apk add --update nodejs npm curl
 RUN  chmod a+x                                      /entrypoint.sh \
-     && echo "Europe/Brussels" >                    /etc/timezone
+     && chmod a+x                                   /api_query.sh  \
+     && echo "Europe/Brussels" >                    /etc/timezone  \
+     && chmod 755 /root
 
 ENTRYPOINT ["/entrypoint.sh"]
