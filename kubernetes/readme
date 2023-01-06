@@ -7,9 +7,11 @@ secret/celsius created
 $ kubectl apply -f ghcr-secret.yaml 
 secret/dockerconfigjson-github-com created
 
-$ kubectl apply -f fabric8-rbac.yaml 
-serviceaccount/celsius created
-clusterrolebinding.rbac.authorization.k8s.io/fabric8-rbac created
+$ kubectl apply -f celsius-rbac.yaml 
+erviceaccount/celsius-sa created
+clusterrole.rbac.authorization.k8s.io/celsius-cluster-role created
+rolebinding.rbac.authorization.k8s.io/celsius-cluster-role-binding-ns-celsius created
+rolebinding.rbac.authorization.k8s.io/celsius-cluster-role-binding-ns-graphite created
 
 $ kubectl apply -f celsius-deployment.yaml
 deployment.apps/celsius created
@@ -20,9 +22,6 @@ deployment.apps/celsius replaced
 $ kubectl logs celsius-9f49b7c74-xx6pg
 INFO[0000] Acquiring lock file /var/lib/rancher/k3s/data/.lock 
 INFO[0000] Preparing data dir /var/lib/rancher/k3s/data/8c4262cf7fdd652cccb03a99a99fdffc96d9ad41d7e57af9eb08c7ac2867c72a 
-Error from server (Forbidden): pods is forbidden: User "system:serviceaccount:default:default" cannot list resource "pods" in API group "" in the namespace "graphite"
-punt!
-Terminated
 
 Info:
 ----
@@ -33,5 +32,4 @@ Info:
 
 curl --cacert ${CACERT} --header "Authorization: Bearer ${TOKEN}" -X GET ${API_SERVER_URL}/healthz 2>/dev/null
 curl --cacert ${CACERT} --header "Authorization: Bearer ${TOKEN}" -X GET ${API_SERVER_URL}/api/v1/namespaces/celsius/pods/celsius-5b785b58c4-7zdkq/
-log
 
