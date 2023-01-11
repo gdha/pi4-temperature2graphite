@@ -1,5 +1,8 @@
 # pi4-temperature2graphite
 
+This repository will create a small docker image based on Alpine ARM64 image with a small script `entrypoint.sh` which will send every minute the temperature of the node where the container runs on to the graphite carbon servive (port 2003).
+
+The docker image is pushed afterwards by the `build.sh` script to the Github Docker registry:
 
 ```bash
 gdha@n1:~/projects/pi4-temperature2graphite$ ./build.sh 
@@ -43,3 +46,11 @@ The push refers to repository [ghcr.io/gdha/pi4-temperature2graphite]
 4e8e4928c701: Mounted from gdha/temperature2graphite 
 v1.0: digest: sha256:b714b8d285f96e0823248b75f32f700d08cd3a85e684b280913816457950515c size: 942
 ```
+
+The interesting part is that the script `entrypoint.sh` will use command:
+
+```bash
+/usr/bin/kubectl -n graphite get pods -o wide | tail -1 | awk '{print $6}'
+```
+
+to find the IP address of the graphite pod and use this as target to send the temperature data to it.
