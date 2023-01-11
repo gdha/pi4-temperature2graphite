@@ -1,6 +1,6 @@
 # pi4-temperature2graphite
 
-This repository will create a small docker image based on Alpine ARM64 image with a small script `entrypoint.sh` which will send every minute the temperature of the node where the container runs on to the graphite carbon servive (port 2003).
+This repository will create a small docker image based on Alpine ARM64 image with a small script `entrypoint.sh` which will send every minute the temperature of the node where the container runs on to the graphite carbon service (port 2003).
 
 The docker image is pushed afterwards by the `build.sh` script to the Github Docker registry:
 
@@ -53,4 +53,4 @@ The interesting part is that the script `entrypoint.sh` will use command:
 /usr/bin/kubectl -n graphite get pods -o wide | tail -1 | awk '{print $6}'
 ```
 
-to find the IP address of the graphite pod and use this as target to send the temperature data to it.
+to find the IP address of the graphite pod and use this as target to send the temperature data to it. Of course, we do assume that the graphite pod exists and can store its data in a PVC (on a k3s cluster).
