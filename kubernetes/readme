@@ -29,7 +29,365 @@ Info:
   We need to define SYS_ADMIN capability and 'hostname -F' will now set the hostname properly
   (we do not need this feature)
 
+$ kubectl get pods -n celsius
+NAME                       READY   STATUS    RESTARTS   AGE
+celsius-5d8cfd5647-6bzs6   1/1     Running   0          102m
+celsius-5d8cfd5647-pgn4s   1/1     Running   0          102m
+celsius-5d8cfd5647-jsf9s   1/1     Running   0          102m
+celsius-5d8cfd5647-qzgb7   1/1     Running   0          102m
+celsius-5d8cfd5647-lmh7d   1/1     Running   0          102m
 
-curl --cacert ${CACERT} --header "Authorization: Bearer ${TOKEN}" -X GET ${API_SERVER_URL}/healthz 2>/dev/null
-curl --cacert ${CACERT} --header "Authorization: Bearer ${TOKEN}" -X GET ${API_SERVER_URL}/api/v1/namespaces/celsius/pods/celsius-5b785b58c4-7zdkq/
+ kubectl exec -it celsius-5d8cfd5647-lmh7d -n celsius -- /bin/sh
+/ # /api_query.sh 
+{
+  "kind": "APIVersions",
+  "versions": [
+    "v1"
+  ],
+  "serverAddressByClientCIDRs": [
+    {
+      "clientCIDR": "0.0.0.0/0",
+      "serverAddress": "192.168.0.201:6443"
+    }
+  ]
+}/ # 
+
+ # API_SERVER_URL=https://kubernetes.default.svc
+/ # SERVICE_ACCOUNT_FOLDER=/var/run/secrets/kubernetes.io/serviceaccount
+/ # NAMESPACE=$(cat ${SERVICE_ACCOUNT_FOLDER}/namespace)
+/ # TOKEN=$(cat ${SERVICE_ACCOUNT_FOLDER}/token)
+/ # CACERT=${SERVICE_ACCOUNT_FOLDER}/ca.crt
+/ # curl --cacert ${CACERT} --header "Authorization: Bearer ${TOKEN}" -X GET ${API_SERVER_URL}/healthz 2>/dev/null
+ok/ # 
+/ # curl --cacert ${CACERT} --header "Authorization: Bearer ${TOKEN}" -X GET ${API_SERVER_URL}/api/v1/namespaces/celsius/pods/celsius-5d8cfd5647-lm
+h7d/
+{
+  "kind": "Pod",
+  "apiVersion": "v1",
+  "metadata": {
+    "name": "celsius-5d8cfd5647-lmh7d",
+    "generateName": "celsius-5d8cfd5647-",
+    "namespace": "celsius",
+    "uid": "1fb98651-e252-4090-9afd-31eb8a80ac4b",
+    "resourceVersion": "3964586",
+    "creationTimestamp": "2023-01-11T08:33:20Z",
+    "labels": {
+      "app": "celsius",
+      "app.kubernetes.io/name": "celsius",
+      "pod-template-hash": "5d8cfd5647"
+    },
+    "ownerReferences": [
+      {
+        "apiVersion": "apps/v1",
+        "kind": "ReplicaSet",
+        "name": "celsius-5d8cfd5647",
+        "uid": "c11cba6d-3d82-44dc-9fb1-17ce4e8a7302",
+        "controller": true,
+        "blockOwnerDeletion": true
+      }
+    ],
+    "managedFields": [
+      {
+        "manager": "k3s",
+        "operation": "Update",
+        "apiVersion": "v1",
+        "time": "2023-01-11T08:33:20Z",
+        "fieldsType": "FieldsV1",
+        "fieldsV1": {
+          "f:metadata": {
+            "f:generateName": {},
+            "f:labels": {
+              ".": {},
+              "f:app": {},
+              "f:app.kubernetes.io/name": {},
+              "f:pod-template-hash": {}
+            },
+            "f:ownerReferences": {
+              ".": {},
+              "k:{\"uid\":\"c11cba6d-3d82-44dc-9fb1-17ce4e8a7302\"}": {}
+            }
+          },
+          "f:spec": {
+            "f:affinity": {
+              ".": {},
+              "f:nodeAffinity": {
+                ".": {},
+                "f:preferredDuringSchedulingIgnoredDuringExecution": {}
+              }
+            },
+            "f:containers": {
+              "k:{\"name\":\"celsius\"}": {
+                ".": {},
+                "f:image": {},
+                "f:imagePullPolicy": {},
+                "f:name": {},
+                "f:resources": {},
+                "f:terminationMessagePath": {},
+                "f:terminationMessagePolicy": {},
+                "f:tty": {},
+                "f:volumeMounts": {
+                  ".": {},
+                  "k:{\"mountPath\":\"/etc/hostname\"}": {
+                    ".": {},
+                    "f:mountPath": {},
+                    "f:name": {},
+                    "f:readOnly": {}
+                  }
+                }
+              }
+            },
+            "f:dnsPolicy": {},
+            "f:enableServiceLinks": {},
+            "f:imagePullSecrets": {
+              ".": {},
+              "k:{\"name\":\"dockerconfigjson-github-com\"}": {}
+            },
+            "f:restartPolicy": {},
+            "f:schedulerName": {},
+            "f:securityContext": {},
+            "f:serviceAccount": {},
+            "f:serviceAccountName": {},
+            "f:terminationGracePeriodSeconds": {},
+            "f:volumes": {
+              ".": {},
+              "k:{\"name\":\"bind-mount--etc-hostname\"}": {
+                ".": {},
+                "f:hostPath": {
+                  ".": {},
+                  "f:path": {},
+                  "f:type": {}
+                },
+                "f:name": {}
+              }
+            }
+          }
+        }
+      },
+      {
+        "manager": "k3s",
+        "operation": "Update",
+        "apiVersion": "v1",
+        "time": "2023-01-11T08:34:42Z",
+        "fieldsType": "FieldsV1",
+        "fieldsV1": {
+          "f:status": {
+            "f:conditions": {
+              "k:{\"type\":\"ContainersReady\"}": {
+                ".": {},
+                "f:lastProbeTime": {},
+                "f:lastTransitionTime": {},
+                "f:status": {},
+                "f:type": {}
+              },
+              "k:{\"type\":\"Initialized\"}": {
+                ".": {},
+                "f:lastProbeTime": {},
+                "f:lastTransitionTime": {},
+                "f:status": {},
+                "f:type": {}
+              },
+              "k:{\"type\":\"Ready\"}": {
+                ".": {},
+                "f:lastProbeTime": {},
+                "f:lastTransitionTime": {},
+                "f:status": {},
+                "f:type": {}
+              }
+            },
+            "f:containerStatuses": {},
+            "f:hostIP": {},
+            "f:phase": {},
+            "f:podIP": {},
+            "f:podIPs": {
+              ".": {},
+              "k:{\"ip\":\"10.42.3.69\"}": {
+                ".": {},
+                "f:ip": {}
+              }
+            },
+            "f:startTime": {}
+          }
+        },
+        "subresource": "status"
+      }
+    ]
+  },
+  "spec": {
+    "volumes": [
+      {
+        "name": "bind-mount--etc-hostname",
+        "hostPath": {
+          "path": "/etc/hostname",
+          "type": ""
+        }
+      },
+      {
+        "name": "kube-api-access-29v8w",
+        "projected": {
+          "sources": [
+            {
+              "serviceAccountToken": {
+                "expirationSeconds": 3607,
+                "path": "token"
+              }
+            },
+            {
+              "configMap": {
+                "name": "kube-root-ca.crt",
+                "items": [
+                  {
+                    "key": "ca.crt",
+                    "path": "ca.crt"
+                  }
+                ]
+              }
+            },
+            {
+              "downwardAPI": {
+                "items": [
+                  {
+                    "path": "namespace",
+                    "fieldRef": {
+                      "apiVersion": "v1",
+                      "fieldPath": "metadata.namespace"
+                    }
+                  }
+                ]
+              }
+            }
+          ],
+          "defaultMode": 420
+        }
+      }
+    ],
+    "containers": [
+      {
+        "name": "celsius",
+        "image": "ghcr.io/gdha/pi4-temperature2graphite:v1.6",
+        "resources": {},
+        "volumeMounts": [
+          {
+            "name": "bind-mount--etc-hostname",
+            "readOnly": true,
+            "mountPath": "/etc/hostname"
+          },
+          {
+            "name": "kube-api-access-29v8w",
+            "readOnly": true,
+            "mountPath": "/var/run/secrets/kubernetes.io/serviceaccount"
+          }
+        ],
+        "terminationMessagePath": "/dev/termination-log",
+        "terminationMessagePolicy": "File",
+        "imagePullPolicy": "IfNotPresent",
+        "tty": true
+      }
+    ],
+    "restartPolicy": "Always",
+    "terminationGracePeriodSeconds": 30,
+    "dnsPolicy": "ClusterFirst",
+    "serviceAccountName": "celsius-sa",
+    "serviceAccount": "celsius-sa",
+    "nodeName": "n3",
+    "securityContext": {},
+    "imagePullSecrets": [
+      {
+        "name": "dockerconfigjson-github-com"
+      }
+    ],
+    "affinity": {
+      "nodeAffinity": {
+        "preferredDuringSchedulingIgnoredDuringExecution": [
+          {
+            "weight": 100,
+            "preference": {
+              "matchExpressions": [
+                {
+                  "key": "app",
+                  "operator": "In",
+                  "values": [
+                    "celsius"
+                  ]
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    "schedulerName": "default-scheduler",
+    "tolerations": [
+      {
+        "key": "node.kubernetes.io/not-ready",
+        "operator": "Exists",
+        "effect": "NoExecute",
+        "tolerationSeconds": 300
+      },
+      {
+        "key": "node.kubernetes.io/unreachable",
+        "operator": "Exists",
+        "effect": "NoExecute",
+        "tolerationSeconds": 300
+      }
+    ],
+    "priority": 0,
+    "enableServiceLinks": true,
+    "preemptionPolicy": "PreemptLowerPriority"
+  },
+  "status": {
+    "phase": "Running",
+    "conditions": [
+      {
+        "type": "Initialized",
+        "status": "True",
+        "lastProbeTime": null,
+        "lastTransitionTime": "2023-01-11T08:33:20Z"
+      },
+      {
+        "type": "Ready",
+        "status": "True",
+        "lastProbeTime": null,
+        "lastTransitionTime": "2023-01-11T08:34:42Z"
+      },
+      {
+        "type": "ContainersReady",
+        "status": "True",
+        "lastProbeTime": null,
+        "lastTransitionTime": "2023-01-11T08:34:42Z"
+      },
+      {
+        "type": "PodScheduled",
+        "status": "True",
+        "lastProbeTime": null,
+        "lastTransitionTime": "2023-01-11T08:33:20Z"
+      }
+    ],
+    "hostIP": "192.168.0.203",
+    "podIP": "10.42.3.69",
+    "podIPs": [
+      {
+        "ip": "10.42.3.69"
+      }
+    ],
+    "startTime": "2023-01-11T08:33:20Z",
+    "containerStatuses": [
+      {
+        "name": "celsius",
+        "state": {
+          "running": {
+            "startedAt": "2023-01-11T08:34:41Z"
+          }
+        },
+        "lastState": {},
+        "ready": true,
+        "restartCount": 0,
+        "image": "ghcr.io/gdha/pi4-temperature2graphite:v1.6",
+        "imageID": "ghcr.io/gdha/pi4-temperature2graphite@sha256:a823ab0e3d6c9ed6f37e38a9fef3b64dc897e4322579342d03b1932774070a25",
+        "containerID": "containerd://45bd5a41d3349a76527551e9fd4b194cd0764d68279762dd8cff8a14c3b96b2f",
+        "started": true
+      }
+    ],
+    "qosClass": "BestEffort"
+  }
+}/ # 
 
