@@ -47,12 +47,23 @@ The push refers to repository [ghcr.io/gdha/pi4-temperature2graphite]
 v1.0: digest: sha256:b714b8d285f96e0823248b75f32f700d08cd3a85e684b280913816457950515c size: 942
 ```
 
-The interesting part is that the script `entrypoint.sh` will use command:
+The content of the script `entrypoint.sh` is basically the following:
 
 ```bash
-/usr/bin/kubectl -n graphite get pods -o wide | tail -1 | awk '{print $6}'
+HOSTNAME=$(cat /etc/hostname)
+while true
+do
+  # keep the SERVER line inside the loop as at each restart the graphite pod gets a new IP address
+  SERVER=$(/usr/bin/kubectl -n graphite get pods -o wide | tail -1 | awk '{print $6}')
+  cpu_temp=$(cat /sys/class/thermal/thermal_zone0/temp)
+  cpu_temp=$(expr $cpu_temp / 1000)
+  echo "carbon.celsius.$HOSTNAME $cpu_temp $(date +%s)" | timeout 2 nc $SERVER 2003 
+  sleep 60
+done
 ```
 
-to find the IP address of the graphite pod and use this as target to send the temperature data to it. Of course, we do assume that the graphite pod exists and can store its data in a PVC (on a k3s cluster).
+The variable SERVER contains the IP address of the graphite pod and we use this as target to send the temperature data to graphite pod. Of course, we do assume that the graphite pod exists and can store its data in a PVC (on a k3s cluster).
 
-<img alt="graphite browser" src="pic/celsius-of-n2.png" width="400">
+If it works we should see an output like the following:
+
+<img alt="graphite browser" src="pic/celsius-of-n2.png" width="600">
