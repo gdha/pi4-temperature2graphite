@@ -54,3 +54,5 @@ The interesting part is that the script `entrypoint.sh` will use command:
 ```
 
 to find the IP address of the graphite pod and use this as target to send the temperature data to it. Of course, we do assume that the graphite pod exists and can store its data in a PVC (on a k3s cluster).
+
+<img alt="graphite browser" src="pic/celsius-of-n2.png" width="400">
