@@ -1,3 +1,5 @@
+# Kubernetest setup steps for the celsius pods
+
 $ kubectl apply -f celsius-namespace.yaml
 namespace/celsius created
 
@@ -19,23 +21,32 @@ deployment.apps/celsius created
 $ kubectl replace -f celsius-deployment.yaml 
 deployment.apps/celsius replaced
 
-$ kubectl logs celsius-9f49b7c74-xx6pg
+$ kubectl get pods -n celsius -w
+NAME                       READY   STATUS              RESTARTS   AGE
+celsius-6ffb4f4bcc-jl579   0/1     ContainerCreating   0          16s
+celsius-6ffb4f4bcc-kh4dh   0/1     ContainerCreating   0          16s
+celsius-6ffb4f4bcc-qzt8w   0/1     ContainerCreating   0          16s
+celsius-6ffb4f4bcc-nfgnx   0/1     ContainerCreating   0          16s
+celsius-6ffb4f4bcc-nptk6   0/1     ContainerCreating   0          16s
+celsius-6ffb4f4bcc-kh4dh   1/1     Running             0          81s
+celsius-6ffb4f4bcc-nfgnx   1/1     Running             0          83s
+celsius-6ffb4f4bcc-nptk6   1/1     Running             0          84s
+celsius-6ffb4f4bcc-jl579   1/1     Running             0          86s
+celsius-6ffb4f4bcc-qzt8w   1/1     Running             0          89s
+
+$ kubectl logs -n celsius celsius-6ffb4f4bcc-qzt8w
 INFO[0000] Acquiring lock file /var/lib/rancher/k3s/data/.lock 
 INFO[0000] Preparing data dir /var/lib/rancher/k3s/data/8c4262cf7fdd652cccb03a99a99fdffc96d9ad41d7e57af9eb08c7ac2867c72a 
 
-Info:
-----
+
+### Info:
+
 * To set hostname inside an alpine pod - https://snyk.io/blog/kubernetes-securitycontext-linux-capabilities/
   We need to define SYS_ADMIN capability and 'hostname -F' will now set the hostname properly
   (we do not need this feature)
 
-$ kubectl get pods -n celsius
-NAME                       READY   STATUS    RESTARTS   AGE
-celsius-5d8cfd5647-6bzs6   1/1     Running   0          102m
-celsius-5d8cfd5647-pgn4s   1/1     Running   0          102m
-celsius-5d8cfd5647-jsf9s   1/1     Running   0          102m
-celsius-5d8cfd5647-qzgb7   1/1     Running   0          102m
-celsius-5d8cfd5647-lmh7d   1/1     Running   0          102m
+
+### Running an exec in one of the celsius pods
 
  kubectl exec -it celsius-5d8cfd5647-lmh7d -n celsius -- /bin/sh
 / # /api_query.sh 
@@ -52,13 +63,14 @@ celsius-5d8cfd5647-lmh7d   1/1     Running   0          102m
   ]
 }/ # 
 
- # API_SERVER_URL=https://kubernetes.default.svc
+/ # API_SERVER_URL=https://kubernetes.default.svc
 / # SERVICE_ACCOUNT_FOLDER=/var/run/secrets/kubernetes.io/serviceaccount
 / # NAMESPACE=$(cat ${SERVICE_ACCOUNT_FOLDER}/namespace)
 / # TOKEN=$(cat ${SERVICE_ACCOUNT_FOLDER}/token)
 / # CACERT=${SERVICE_ACCOUNT_FOLDER}/ca.crt
 / # curl --cacert ${CACERT} --header "Authorization: Bearer ${TOKEN}" -X GET ${API_SERVER_URL}/healthz 2>/dev/null
-ok/ # 
+ok
+/ # 
 / # curl --cacert ${CACERT} --header "Authorization: Bearer ${TOKEN}" -X GET ${API_SERVER_URL}/api/v1/namespaces/celsius/pods/celsius-5d8cfd5647-lm
 h7d/
 {
