@@ -47,6 +47,8 @@ The push refers to repository [ghcr.io/gdha/pi4-temperature2graphite]
 v1.0: digest: sha256:b714b8d285f96e0823248b75f32f700d08cd3a85e684b280913816457950515c size: 942
 ```
 
+To use an higher version number use the command `./build.sh v1.1`
+
 The content of the script `entrypoint.sh` is basically the following:
 
 ```bash
@@ -67,3 +69,5 @@ The variable SERVER contains the IP address of the graphite pod and we use this 
 If it works we should see an output like the following:
 
 <img alt="graphite browser" src="pic/celsius-of-n2.png" width="600">
+
+To integrate this container into the k3s cluster go into the `kubernetes` directory and check its readme file.
