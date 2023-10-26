@@ -32,7 +32,7 @@ spec:
       serviceAccountName: celsius-sa
       containers:
       - name: celsius
-        image: ghcr.io/gdha/pi4-temperature2graphite:v1.8
+        image: ghcr.io/gdha/pi4-temperature2graphite:v1.9
         tty: true
         volumeMounts:
         - mountPath: /etc/hostname

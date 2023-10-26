@@ -19,6 +19,7 @@ echo "Copy /usr/local/bin/k3s to $PWD"
 cp /usr/local/bin/k3s .
 echo "Building pi4-temperature2graphite:$REL"
 docker build --tag ghcr.io/gdha/pi4-temperature2graphite:$REL  .
+[[ $? -ne 0 ]] && exit 1
 docker tag ghcr.io/gdha/pi4-temperature2graphite:$REL ghcr.io/gdha/pi4-temperature2graphite:latest
 echo "Pushing pi4-temperature2graphite:$REL to GitHub Docker Container registry"
 docker push ghcr.io/gdha/pi4-temperature2graphite:$REL

@@ -3,8 +3,15 @@
 $ kubectl apply -f celsius-namespace.yaml
 namespace/celsius created
 
- kubectl apply -f celsius-secret.yaml
+$ kubectl apply -f celsius-secret.yaml
 secret/celsius created
+
+$ mkdir .hidden
+$ kubectl create secret docker-registry dockerconfigjson-github-com --docker-server=ghcr.io  --docker-username=gdha --docker-password=$(cat ~/.ghcr-token) --dry-run=client -oyaml >.hidden/ghcr-secret.yaml
+
+Note: Edit .hidden/ghcr-secret.yaml and add namespace: celsius in the metadata section.
+
+$ ln -s .hidden/ghcr-secret.yaml ghcr-secret.yaml
 
 $ kubectl apply -f ghcr-secret.yaml 
 secret/dockerconfigjson-github-com created
@@ -17,7 +24,9 @@ rolebinding.rbac.authorization.k8s.io/celsius-cluster-role-binding-ns-graphite c
 
 $ kubectl apply -f celsius-deployment.yaml
 deployment.apps/celsius created
+
  or
+
 $ kubectl replace -f celsius-deployment.yaml 
 deployment.apps/celsius replaced
 
