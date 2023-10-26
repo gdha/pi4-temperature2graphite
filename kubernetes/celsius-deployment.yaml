@@ -10,7 +10,7 @@ spec:
   selector:
     matchLabels:
       app: celsius
-  replicas: 5
+  replicas: 6
   strategy:
     type: RollingUpdate
   template:
@@ -20,16 +20,12 @@ spec:
         app.kubernetes.io/name: celsius
     spec:
       affinity:
-        nodeAffinity:
-          preferredDuringSchedulingIgnoredDuringExecution:
-            - weight: 100
-              preference:
-                matchExpressions:
-                - key: app
-                  operator: In
-                  values:
-                  - celsius
-                    #topologyKey: "kubernetes.io/hostname"
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            - topologyKey: "kubernetes.io/hostname"
+              labelSelector:
+                matchLabels:
+                  app: celsius
       imagePullSecrets:
         - name: dockerconfigjson-github-com
       restartPolicy: Always
