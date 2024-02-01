@@ -9,6 +9,7 @@ while true
 do
   # move the SERVER line inside the loop as at each restart the graphite pod gets a new IP address
   SERVER=$(/usr/bin/kubectl -n graphite get pods -o wide | tail -1 | awk '{print $6}')
+  [[ "$SERVER" == "ago)" ]] && SERVER=$(/usr/bin/kubectl -n graphite get pods -o wide | tail -1 | awk '{print $8}')
   cpu_temp=$(cat /sys/class/thermal/thermal_zone0/temp)
   #cpu_temp=$(($cpu_temp/1000))
   cpu_temp=$(expr $cpu_temp / 1000)
