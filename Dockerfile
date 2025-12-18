@@ -1,7 +1,7 @@
 # Dockerfile to create the container used to send the temperature of the RPI4
 # to the graphite pod
 #FROM gdha/rpi-alpine-rootfs/alpine:v1.37
-FROM alpine:3.23.0
+FROM alpine:3.23.2
 
 LABEL org.opencontainers.image.sourcec=https://github.com/gdha/pi4-temperature2graphite
 LABEL org.opencontainers.image.description "pi4-temperature2graphite build for the ARM64"
